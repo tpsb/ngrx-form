@@ -9,8 +9,7 @@
     "curly": true,
     "eofline": true,
     "import-blacklist": [
-      true,
-      "rxjs"
+      false
     ],
     "import-spacing": true,
     "indent": [

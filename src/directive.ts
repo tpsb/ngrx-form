@@ -1,18 +1,20 @@
-import { Directive, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Directive, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs/Subject';
-import { takeUntil } from 'rxjs/operators/takeUntil';
-import { debounceTime } from 'rxjs/operators/debounceTime';
-import { UpdateFormStatus, UpdateFormValue, UpdateFormDirty, UpdateFormErrors, UpdateForm } from './actions';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { UpdateForm, UpdateFormDirty, UpdateFormErrors, UpdateFormStatus, UpdateFormValue } from './actions';
 
 const getValue = (obj, prop) => prop.split('.').reduce((acc, part) => acc && acc[part], obj);
 
 @Directive({ selector: '[ngrxForm]' })
 export class FormDirective implements OnInit, OnDestroy {
-  @Input('ngrxForm') path: string;
-  @Input('ngrxFormDebounce') debounce = 100;
-  @Input('ngrxFormClearOnDestroy') clearDestroy: boolean;
+  @Input('ngrxForm')
+  path: string;
+  @Input('ngrxFormDebounce')
+  debounce = 100;
+  @Input('ngrxFormClearOnDestroy')
+  clearDestroy: boolean;
 
   private _destroy$ = new Subject<null>();
   private _updating = false;
@@ -68,7 +70,10 @@ export class FormDirective implements OnInit, OnDestroy {
       });
 
     this._formGroupDirective.valueChanges
-      .pipe(debounceTime(this.debounce), takeUntil(this._destroy$))
+      .pipe(
+        debounceTime(this.debounce),
+        takeUntil(this._destroy$)
+      )
       .subscribe(value => {
         this._updating = true;
         this._store.dispatch(
@@ -94,7 +99,10 @@ export class FormDirective implements OnInit, OnDestroy {
       });
 
     this._formGroupDirective.statusChanges
-      .pipe(debounceTime(this.debounce), takeUntil(this._destroy$))
+      .pipe(
+        debounceTime(this.debounce),
+        takeUntil(this._destroy$)
+      )
       .subscribe(status => {
         this._store.dispatch(
           new UpdateFormStatus({
